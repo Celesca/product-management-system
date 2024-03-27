@@ -52,9 +52,13 @@ app.post('/products', (req, res) => {
 
 // PUT request
 app.put('/products/:id', (req, res) => {
+  if (req.params.id <= 0) {
+    return res.status(400).send({message: 'Invalid ID'});
+  }
+
   const product = products.find(p => p.id === parseInt(req.params.id));
   if (!product) {
-    return res.status(404).send({"message" : "Product not found"});
+    return res.status(404).send({message : "Product not found"});
   }
 
   product.name = req.body.name;
@@ -75,7 +79,17 @@ app.put('/products/:id', (req, res) => {
 
 // DELETE request
 app.delete('/products/:id', (req, res) => {
-    res.send('Delete the product with id ' + req.params.id);
+  if (req.params.id <= 0) {
+    return res.status(400).send({message: 'Invalid ID'});
+  }
+
+   const productIndex = products.findIndex(p => p.id === parseInt(req.params.id));
+   if (productIndex === -1) {
+    return res.statusCode(404).send({message: 'Product not found'});
+   }
+   
+   const deletedProduct = products.splice(productIndex, 1);
+   res.json(deletedProduct[0]);
 })
 
 app.listen(port, () => {
