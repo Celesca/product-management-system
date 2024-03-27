@@ -2,9 +2,12 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+// Middleware
+app.use(express.json());
+
 // GET request
 app.get('/products', (req, res) => {
-  res.send('Hello World!');
+  res.json('Hello World!');
 });
 
 // POST request
@@ -25,3 +28,5 @@ app.delete('/products/:id', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running at <http://localhost>:${port}/`);
 });
+
+module.exports = app;
