@@ -80,12 +80,12 @@ app.put('/products/:id', (req, res) => {
 // DELETE request
 app.delete('/products/:id', (req, res) => {
   if (req.params.id <= 0) {
-    return res.status(400).send({message: 'Invalid ID'});
+    return res.status(400).send({ message: 'Invalid ID' });
   }
 
    const productIndex = products.findIndex(p => p.id === parseInt(req.params.id));
    if (productIndex === -1) {
-    return res.statusCode(404).send({message: 'Product not found'});
+    return res.status(404).send({message: 'Product not found'});
    }
    
    const deletedProduct = products.splice(productIndex, 1);
