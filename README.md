@@ -2,15 +2,27 @@
 
 Product Management System is the backend server that use to manage product.
 
-### Installation
+## Installation with npm
 
 `git clone https://github.com/Celesca/product-management-system.git`
 
 `cd product-management-system`
 
+`npm install`
+
 `npm start`
 
 Then trying API endpoints with Postman or Web Browser at Port 3000.
+
+## Installation with Docker
+
+`git clone https://github.com/Celesca/product-management-system.git`
+
+`cd product-management-system`
+
+`docker-compose up --build`
+
+Finally, your server is ready to testing at Port 3000.
 
 ### API Endpoints Guidelines
 
