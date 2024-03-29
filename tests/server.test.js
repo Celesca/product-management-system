@@ -38,6 +38,14 @@ describe('GET /products/:id with invalid id', () => {
     })
 })
 
+describe('GET /products/:id with string id', () => {
+    it("should return a 400", async() => {
+        const res =await request(app).get("/products/helloAA1");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Invalid ID");
+    })
+})
+
 // POST /products
 
 describe('POST /products normal', () => {
@@ -69,7 +77,33 @@ describe('POST /products Invalid Request', () => {
             price: 100
         });
         expect(res.statusCode).toBe(400);
-        expect(res.body.message).toStrictEqual("All fields are required");
+        expect(res.body.message).toStrictEqual("Invalid request body");
+    })
+});
+
+describe('POST /products String Stock', () => {
+    it("should return a 400", async() => {
+        const res = await request(app).post("/products").send({
+            name: "New Product",
+            category: "New Category",
+            price: 100,
+            stock: "hello"
+        });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Invalid request body");
+    })
+});
+
+describe('POST /products Minus price', () => {
+    it("should return a 400", async() => {
+        const res = await request(app).post("/products").send({
+            name: "New Product",
+            category: "New Category",
+            price: -100,
+            stock: 10
+        });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Price and Stock must be greater than 0");
     })
 });
 
@@ -108,8 +142,6 @@ describe('PUT /products/:id normal', () => {
     })
 });
 
-
-
 describe('PUT /products/:id with no id in products', () => {
     it("should return a 404", async() => {
         const res = await request(app).put("/products/100").send({
@@ -144,7 +176,20 @@ describe('PUT /products/:id Invalid Request', () => {
             price: 200
         });
         expect(res.statusCode).toBe(400);
-        expect(res.body.message).toStrictEqual("All fields are required");
+        expect(res.body.message).toStrictEqual("Invalid request body");
+    })
+});
+
+describe('PUT /products/:id string stock', () => {
+    it("should return a 400", async() => {
+        const res = await request(app).put("/products/3").send({
+            name: "Updated Product",
+            category: "Updated Category",
+            price: 200,
+            stock: "hello"
+        });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Invalid request body");
     })
 });
 
@@ -187,3 +232,11 @@ describe('DELETE /products/:id with invalid id', () => {
         expect(res.body.message).toStrictEqual("Invalid ID");
     })
 });
+
+describe('DELETE /products/:id with string id', () => {
+    it("should return a 400", async() => {
+        const res = await request(app).delete("/products/hello");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Invalid ID");
+    })
+})
