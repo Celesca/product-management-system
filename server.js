@@ -88,11 +88,12 @@ app.put('/products/:id', (req, res) => {
 
 // DELETE request
 app.delete('/products/:id', (req, res) => {
-  if (req.params.id <= 0) {
+  const deletedProductID = parseInt(req.params.id);
+  if (deletedProductID <= 0 || !deletedProductID) {
     return res.status(400).send({ message: 'Invalid ID' });
   }
 
-   const productIndex = products.findIndex(p => p.id === parseInt(req.params.id));
+   const productIndex = products.findIndex(p => p.id === deletedProductID);
    if (productIndex === -1) {
     return res.status(404).send({message: 'Product not found'});
    }

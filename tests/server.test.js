@@ -232,3 +232,11 @@ describe('DELETE /products/:id with invalid id', () => {
         expect(res.body.message).toStrictEqual("Invalid ID");
     })
 });
+
+describe('DELETE /products/:id with string id', () => {
+    it("should return a 400", async() => {
+        const res = await request(app).delete("/products/hello");
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toStrictEqual("Invalid ID");
+    })
+})
