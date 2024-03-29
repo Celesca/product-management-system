@@ -21,7 +21,9 @@ app.get('/products', (req, res) => {
 
 // Get Single Product
 app.get('/products/:id', (req, res) => {
-  if (req.params.id <= 0) {
+  const findProductID = parseInt(req.params.id)
+
+  if (findProductID <= 0 || !findProductID) {
     return res.status(400).send({message: 'Invalid ID'});
   }
   const product = products.find(product => product.id === parseInt(req.params.id));
@@ -33,18 +35,20 @@ app.get('/products/:id', (req, res) => {
 
 // POST request
 app.post('/products', (req, res) => {
-  if (!req.body.name || !req.body.category || !req.body.price || !req.body.stock) {
-    return res.status(400).send({message: 'All fields are required'});
+  const newProductPrice = parseInt(req.body.price);
+  const newProductStock = parseInt(req.body.stock);
+  if (!req.body.name || !req.body.category || !newProductPrice || !newProductStock) {
+    return res.status(400).send({message: 'Invalid request body'});
   }
-  if (req.body.price <= 0 || req.body.stock <= 0) {
+  if (newProductPrice <= 0 || newProductStock <= 0) {
     return res.status(400).send({message: 'Price and Stock must be greater than 0'});
   }
     const newProduct = {
       id: products.length + 1,
       name: req.body.name,
       category: req.body.category,
-      price: req.body.price,
-      stock: req.body.stock
+      price: newProductPrice,
+      stock: newProductStock
     };
     products.push(newProduct);
     res.json(newProduct);
@@ -52,25 +56,30 @@ app.post('/products', (req, res) => {
 
 // PUT request
 app.put('/products/:id', (req, res) => {
-  if (req.params.id <= 0) {
+  const updateProductID = parseInt(req.params.id);
+
+  if (!updateProductID || updateProductID <= 0) {
     return res.status(400).send({message: 'Invalid ID'});
   }
 
-  const product = products.find(p => p.id === parseInt(req.params.id));
+  const product = products.find(p => p.id === updateProductID);
   if (!product) {
     return res.status(404).send({message : "Product not found"});
   }
 
+  const updateProductPrice = parseInt(req.body.price);
+  const updateProductStock = parseInt(req.body.stock);
+
   product.name = req.body.name;
   product.category = req.body.category;
-  product.price = req.body.price;
-  product.stock = req.body.stock;
+  product.price = updateProductPrice;
+  product.stock = updateProductStock;
 
-  if (!req.body.name || !req.body.category || !req.body.price || !req.body.stock) {
-    return res.status(400).send({message: 'All fields are required'});
+  if (!req.body.name || !req.body.category || !updateProductPrice || !updateProductStock) {
+    return res.status(400).send({message: 'Invalid request body'});
   }
 
-  if (req.body.price <= 0 || req.body.stock <= 0) {
+  if (updateProductPrice <= 0 || updateProductStock <= 0) {
     return res.status(400).send({message: 'Price and Stock must be greater than 0'});
   }
 
