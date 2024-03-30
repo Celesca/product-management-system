@@ -14,6 +14,8 @@ const products = [
   { id: 2, name: 'Typescript Fundamental', category: 'Books', price: 150, stock: 2}
 ]
 
+let productID = products.length;
+
 // Get all products
 app.get('/products', (req, res) => {
   res.json(products);
