@@ -57,14 +57,14 @@ describe('POST /products normal', () => {
             stock: 10
         });
         const addProductResponse = {
-            id: 3,
+            id: 4,
             name: "New Product",
             category: "New Category",
             price: 100,
             stock: 10
         };
         expect(res.statusCode).toBe(200);
-        expect(res.body.id).toBe(3);
+        expect(res.body.id).toBe(4);
         expect(res.body).toStrictEqual(addProductResponse);
     })
 })
@@ -124,14 +124,14 @@ describe('POST /products Minus stock', () => {
 
 describe('PUT /products/:id normal', () => {
     it("should update a product", async() => {
-        const res = await request(app).put("/products/3").send({
+        const res = await request(app).put("/products/1").send({
             name: "Updated Product",
             category: "Updated Category",
             price: 200,
             stock: 20
         });
         const updatedProduct = {
-            id: 3,
+            id: 1,
             name: "Updated Product",
             category: "Updated Category",
             price: 200,
@@ -195,7 +195,7 @@ describe('PUT /products/:id string stock', () => {
 
 describe('PUT /products/:id Minus stock', () => {
     it("should return a 400", async() => {
-        const res = await request(app).put("/products/3").send({
+        const res = await request(app).put("/products/1").send({
             name: "Updated Product",
             category: "Updated Category",
             price: 200,
@@ -209,11 +209,9 @@ describe('PUT /products/:id Minus stock', () => {
 // DELETE /products/:id
 describe('DELETE /products/:id normal', () => {
     it("should return a 200 and deleted product", async() => {
-        const deletedProduct = 
-        { id: 1, name: 'Laptop', category: 'Electronics', price: 1000, stock: 5};
         const res = (await request(app).delete("/products/1"));
         expect(res.statusCode).toBe(200);
-        expect(res.body).toStrictEqual(deletedProduct);
+        expect(res.body).toStrictEqual({message: "Product deleted"});
     })
 })
 
