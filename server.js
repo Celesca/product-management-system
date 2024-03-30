@@ -11,10 +11,11 @@ app.use(express.json());
 
 const products = [
   { id: 1, name: 'Laptop', category: 'Electronics', price: 1000, stock: 5},
-  { id: 2, name: 'Typescript Fundamental', category: 'Books', price: 150, stock: 2}
+  { id: 2, name: 'Typescript Fundamental', category: 'Books', price: 150, stock: 2},
+  { id: 3, name: 'Clean code', category: 'Books', price: 1500, stock: 1}
 ]
 
-let productID = products.length;
+let productID = products.length + 1;
 
 // Get all products
 app.get('/products', (req, res) => {
@@ -35,12 +36,12 @@ app.get('/products/:id', (req, res) => {
   res.json(product);
 })
 
-function ProductRequestBody(request) {
+function ProductRequestBody(req, res) {
 
-  const newProductPrice = parseFloat(request.price);
-  const newProductStock = parseFloat(request.stock);
+  const newProductPrice = parseFloat(req.price);
+  const newProductStock = parseInt(req.stock);
 
-  if (!request.name || !request.category || !newProductPrice || !newProductStock) {
+  if (!req.name || !req.category || !newProductPrice || !newProductStock) {
     return res.status(400).send({message: 'Invalid request body'});
   }
   if (newProductPrice <= 0 || newProductStock <= 0) {
@@ -48,8 +49,8 @@ function ProductRequestBody(request) {
   }
   const newProduct = {
       id: productID++,
-      name: request.name,
-      category: request.category,
+      name: req.name,
+      category: req.category,
       price: newProductPrice,
       stock: newProductStock
     };
@@ -57,9 +58,22 @@ function ProductRequestBody(request) {
   return newProduct;
 }
 
+function ValidateProductID(productID, res) {
+  if (productID <= 0 || !productID) {
+    return res.status(400).send({ message: 'Invalid ID' });
+  }
+
+   const productIndex = products.findIndex(p => p.id === productID);
+   if (productIndex === -1) {
+    return res.status(404).send({message: 'Product not found'});
+   }
+   
+   return productIndex;
+}
+
 // POST request
 app.post('/products', (req, res) => {
-    const newProduct = ProductRequestBody(req.body);
+    const newProduct = ProductRequestBody(req.body, res);
     products.push(newProduct);
     res.json(newProduct);
 })
@@ -67,17 +81,10 @@ app.post('/products', (req, res) => {
 // PUT request
 app.put('/products/:id', (req, res) => {
   const updateProductID = parseInt(req.params.id);
+  const productIndex = ValidateProductID(updateProductID, res);
+  const updateProduct = ProductRequestBody(req.body, res);
 
-  if (!updateProductID || updateProductID <= 0) {
-    return res.status(400).send({message: 'Invalid ID'});
-  }
-
-  const product = products.find(p => p.id === updateProductID);
-  if (!product) {
-    return res.status(404).send({message : "Product not found"});
-  }
-
-  const updateProduct = ProductRequestBody(req.body);
+  const product = products[productIndex];
 
   product.name = updateProduct.name;
   product.category = updateProduct.category;
@@ -89,17 +96,9 @@ app.put('/products/:id', (req, res) => {
 // DELETE request
 app.delete('/products/:id', (req, res) => {
   const deletedProductID = parseInt(req.params.id);
-  if (deletedProductID <= 0 || !deletedProductID) {
-    return res.status(400).send({ message: 'Invalid ID' });
-  }
-
-   const productIndex = products.findIndex(p => p.id === deletedProductID);
-   if (productIndex === -1) {
-    return res.status(404).send({message: 'Product not found'});
-   }
-   
-   const deletedProduct = products.splice(productIndex, 1);
-   res.json(deletedProduct[0]);
+  const productIndex = ValidateProductID(deletedProductID, res);
+  products.splice(productIndex, 1);
+  res.send({message: 'Product deleted'});
 })
 
 app.listen(port, () => {
