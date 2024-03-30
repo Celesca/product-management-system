@@ -35,23 +35,31 @@ app.get('/products/:id', (req, res) => {
   res.json(product);
 })
 
-// POST request
-app.post('/products', (req, res) => {
-  const newProductPrice = parseInt(req.body.price);
-  const newProductStock = parseInt(req.body.stock);
-  if (!req.body.name || !req.body.category || !newProductPrice || !newProductStock) {
+function ProductRequestBody(request) {
+
+  const newProductPrice = parseFloat(request.price);
+  const newProductStock = parseFloat(request.stock);
+
+  if (!request.name || !request.category || !newProductPrice || !newProductStock) {
     return res.status(400).send({message: 'Invalid request body'});
   }
   if (newProductPrice <= 0 || newProductStock <= 0) {
     return res.status(400).send({message: 'Price and Stock must be greater than 0'});
   }
-    const newProduct = {
-      id: products.length + 1,
-      name: req.body.name,
-      category: req.body.category,
+  const newProduct = {
+      id: productID++,
+      name: request.name,
+      category: request.category,
       price: newProductPrice,
       stock: newProductStock
     };
+
+  return newProduct;
+}
+
+// POST request
+app.post('/products', (req, res) => {
+    const newProduct = ProductRequestBody(req.body);
     products.push(newProduct);
     res.json(newProduct);
 })
@@ -69,22 +77,12 @@ app.put('/products/:id', (req, res) => {
     return res.status(404).send({message : "Product not found"});
   }
 
-  const updateProductPrice = parseInt(req.body.price);
-  const updateProductStock = parseInt(req.body.stock);
+  const updateProduct = ProductRequestBody(req.body);
 
-  product.name = req.body.name;
-  product.category = req.body.category;
-  product.price = updateProductPrice;
-  product.stock = updateProductStock;
-
-  if (!req.body.name || !req.body.category || !updateProductPrice || !updateProductStock) {
-    return res.status(400).send({message: 'Invalid request body'});
-  }
-
-  if (updateProductPrice <= 0 || updateProductStock <= 0) {
-    return res.status(400).send({message: 'Price and Stock must be greater than 0'});
-  }
-
+  product.name = updateProduct.name;
+  product.category = updateProduct.category;
+  product.price = updateProduct.price;
+  product.stock = updateProduct.stock;
   res.json(product);
 });
 
